@@ -248,7 +248,7 @@ class DefaultTileTranslationCreator(TileTranslationCreator):
 	def name(self):
 		return "DefaultTileTranslationCreator"
 
-class BlenderObjectFromSceneTileTranlationCreator(TileTranslationCreator):
+class BlenderObjectFromSceneTileTranslationCreator(TileTranslationCreator):
 	def createTranslation(self, filePath, relativeDirectory, environment, translationType):
 
 		fileExtension = os.path.splitext(filePath)[1]
@@ -262,7 +262,7 @@ class BlenderObjectFromSceneTileTranlationCreator(TileTranslationCreator):
 		return tileName, translationValue
 
 	def name(self):
-		return "BlenderObjectFromSceneTileTranlationCreator"
+		return "BlenderObjectFromSceneTileTranslationCreator"
 
 if __name__ == "__main__":
 	directoryConverter = DirectoryToTranslationTableConverter()
@@ -279,7 +279,7 @@ if __name__ == "__main__":
 	# The TileTranslationCreator() plugin registered for a particular environment/translation type
 	# is used to create tiletranslation data for tiles if the given environment is specified and
 	# tile being translated is of the given translation type. 
-	directoryConverter.registerPlugin(	BlenderObjectFromSceneTileTranlationCreator(),
+	directoryConverter.registerPlugin(	BlenderObjectFromSceneTileTranslationCreator(),
 										["blender", "blenderObjectFromScene"])
 
 
