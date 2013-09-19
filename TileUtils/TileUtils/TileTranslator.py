@@ -282,7 +282,7 @@ class TileTranslator:
 
 	def _extractTileTranslationsFromTileSetTranslation(self, tileSetTranslation):
 		# Create a dictionary that stores translation data in the manner
-		# of tilsetTranlationData[tilename][translationtype].
+		# of tilsetTranslationData[tilename][translationtype].
 		translations = {}
 		for tileTranslation in tileSetTranslation.findall("tiletranslation"):
 			if tileTranslation.attrib.get("tilename"):
