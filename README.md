@@ -12,35 +12,37 @@ The TileUtils proof of concept works by translating .tmx tilemaps into arbitrary
 
 ## The .ttt File Format ##
 An example of a .ttt file:
-    <?xml version="1.0" encoding="UTF-8"?>
-    <tiletranslationtable name="test" version="0.1">
-        <defaulttranslations />
-        <tilesettranslations>
-            <tilesettranslation tilesetname="test">
-                <tiletranslation tilename="one">
-                    <values>
-                        <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneU.blend/Object/rampOneOneU</blenderObjectFromScene>
-                    </values>
-                </tiletranslation>
-                <tiletranslation tilename="two">
-                    <values>
-                        <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneR.blend/Object/rampOneOneR</blenderObjectFromScene>
-                    </values>
-                </tiletranslation>
-                <tiletranslation tilename="three">
-                    <values>
-                        <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneD.blend/Object/rampOneOneD</blenderObjectFromScene>
-                    </values>
-                </tiletranslation>
-                <tiletranslation tilename="four">
-                    <values>
-                        <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneL.blend/Object/rampOneOneL</blenderObjectFromScene>
-                    </values>
-                </tiletranslation>
-            </tilesettranslation>
-        </tilesettranslations>
-    </tiletranslationtable>
 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<tiletranslationtable name="test" version="0.1">
+    <defaulttranslations />
+    <tilesettranslations>
+        <tilesettranslation tilesetname="test">
+            <tiletranslation tilename="one">
+                <values>
+                    <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneU.blend/Object/rampOneOneU</blenderObjectFromScene>
+                </values>
+            </tiletranslation>
+            <tiletranslation tilename="two">
+                <values>
+                    <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneR.blend/Object/rampOneOneR</blenderObjectFromScene>
+                </values>
+            </tiletranslation>
+            <tiletranslation tilename="three">
+                <values>
+                    <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneD.blend/Object/rampOneOneD</blenderObjectFromScene>
+                </values>
+            </tiletranslation>
+            <tiletranslation tilename="four">
+                <values>
+                    <blenderObjectFromScene>../Objects/standard/blender/rampOneOne/pixen/rampOneOneL.blend/Object/rampOneOneL</blenderObjectFromScene>
+                </values>
+            </tiletranslation>
+        </tilesettranslation>
+    </tilesettranslations>
+</tiletranslationtable>
+```
 
 ## Installation ##
 
@@ -71,12 +73,12 @@ After installing pip-3.3 I tried running it by typing pip-3.3 into the command l
 
     export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/3.3/bin/
 
-to it.
+    to it.
 
 4.  Install TileUtils
 Once pip-3.3 was installed I used it to install the TileUtils package. I did this with the following command:
 
-pip-3.3 install TileUtils-0.0.1.tar.gz 
+    pip-3.3 install TileUtils-0.0.1.tar.gz 
 
 5.  Configure TileUtils
 The executable scripts in TileUtils were not by default installed in a location that was on the path. Like pip-3.3, the TileUtils scripts were installed to  /Library/Frameworks/Python.framework/Versions/3.3/bin/ which fortunately was added to the path in step 3.
@@ -96,20 +98,22 @@ I installed Tiled 0.9.1 by dragging the Tiled executable onto the Applications f
 
 9.  Configure Tiled
 There were a few things I did to configure Tiled. The first was to create a new tilemap and select “XML” as the layer format  (it’s the format that TileUtils understands). Luckily, Tiled saves this selection and uses it as the default option for any new tilemaps. 
+
     I then created some custom commands (https://github.com/bjorn/tiled/wiki/Using-Commands). The first custom command I created was one to run tileplacer.py using Blender to translate the current map. Normally, the process of running tileplacer.py using Blender from the command line (see: tileplacer.py) would look something like the following:
 
-export TILEPLACER_ARGS="'/Users/paul/Documents/Programming/Level Editor/Tiles And Objects/structured/Examples/all.tmx' '/Users/paul/Documents/Programming/Level Editor/Tiles And Objects/structured/Translations/standard.ttt'  blenderObjectFromScene --env blender --steps 1 1 2"
+    export TILEPLACER_ARGS="'/Users/paul/Documents/Programming/Level Editor/Tiles And Objects/structured/Examples/all.tmx' '/Users/paul/Documents/Programming/Level Editor/Tiles And Objects/structured/Translations/standard.ttt'  blenderObjectFromScene --env blender --steps 1 1 2"
 
     '/Applications/blender.app/Contents/MacOS/blender' -P '/Library/Frameworks/Python.framework/Versions/3.3/bin/tileplacer.py'
 
-unset TILEPLACER_ARGS
+    unset TILEPLACER_ARGS
 
-Unfortunately, this process wouldn’t work as a Tiled custom command. This is why I created the ertileplacer.py script (see: ertileplacer.py). ertileplacer.py is a wrapper that allows for the tileplacer.py to be run in the mode described above but without the need for multiple command lines and without the need to set an environment variable in the Terminal.
+    Unfortunately, this process wouldn’t work as a Tiled custom command. This is why I created the ertileplacer.py script (see: ertileplacer.py). ertileplacer.py is a wrapper that allows for the tileplacer.py to be run in the mode described above but without the need for multiple command lines and without the need to set an environment variable in the Terminal.
+    
     With ertileplacer.py I was able to create the custom command line to translate the current map by running tileplacer.py through Blender. The custom command line looked like this:
 
     /Library/Frameworks/Python.framework/Versions/3.3/bin/ertileplacer.py "/Applications/blender.app/Contents/MacOS/blender -P /Library/Frameworks/Python.framework/Versions/3.3/bin/tileplacer.py" %mapfile "/Users/paul/Documents/Programming/Level Editor/Tiles And Objects/structured/Translations/standard.ttt" blenderObjectFromScene --env blender --steps 1 1 2
 
-When I set the command above as the first enabled custom command it became the default command that was run when I clicked the custom command button or pressed F5.
+    When I set the command above as the first enabled custom command it became the default command that was run when I clicked the custom command button or pressed F5.
 
 ## Utilities ##
 
