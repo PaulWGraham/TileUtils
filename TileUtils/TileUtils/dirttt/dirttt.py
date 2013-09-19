@@ -2,6 +2,35 @@
 # Copyright (c) 2013 Paul Graham 
 # See LICENSE for details.
 
+"""
+Creates a new translation table based on the contents of a directory.
+
+
+The operation of dirttt.py mostly depends on one class: TileTranslationCreator().
+
+A TileTranslationCreator() object is responsible for creating data for tiletranslations from files.
+
+For each supported environment type there at least one registered TileTranslationCreator() object.
+The TileTranslationCreator() object registered for a particular environment/translation type is
+used to create tiletranslation data for tiles if the given environment is specified and
+tile being translated is of the given translation type. If a TileTranslationCreator() object is not
+registered for a particular environment/translation type. Then the TileTranslationCreator() object
+registered for an environment is used to create the tiletranslation data. The 'default'
+TileTranslationCreator() object is used to create tiletranslation data if an object is not
+registered for a particular environment and the specified type.
+
+The lifecycle of TileTranslationCreator() plugin:
+
+1. An TileTranslationCreator() object is created based on the specified environment and/or
+translation type.
+
+2. For each file found that has the possibility of used to create translation data the
+TileTranslationCreator() object's createTranslation() method is called with the file's path, the
+path relative to which the data should be created, the specified environment, and the specified
+translation type as parameters.
+
+"""
+
 import argparse
 import os
 import sys
@@ -15,6 +44,7 @@ class ConflictingTileTranslationError(Exception):
 		self.conflictingTranslations = conflictingTranslations
 
 class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
+	"""Creates translation tables based on the contents of a directory by using pluigins."""
 	def __init__(self):
 		super().__init__()
 		self._environments = []
@@ -22,10 +52,33 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 
 	def createTranslationTableFromDirectory(	self, directory, relativeDirectory, environment,
 												ignoreDefaults, tableName, tableVersion):
+		"""
+		Creates a translation table based on the contents of a directory.
 
+		The name of the directory is used as the name of the translation table. The names of the
+		directories contained directly in the directory are used as the names of the tilesets with
+		the exception of the directory named DEFAULTS which, if present in the directory and 
+		ignoreDefaults is false is used to generate the defaulttranslations section of the
+		translation table. The names of the directories directly in the tileset directories are
+		used as the translation types present in that particular tileset. The translation type
+		directories are then recursively searched and any non-directory files found are 
+		possibly used to generate tile translation values depending on the implementation of the
+		TileTranslationCreator() plugin used. The names of the files found are used to generate the
+		names of the tiles and the content of the files is used to create the translation values.
+		
+		"""
+
+		# Use the first iteration of the generator returned by os.walk() to get a list of
+		# directories in the root directory and a list of non-directory files in the root directory.
 		translationTableRootDir, tileSetNames, miscFiles = next(os.walk(directory))
+		
+		# Remove the names of directories that begin with a period from the list of names to be
+		# used as the names of the tilesets. 
 		tileSetNames[:] = self._filterOutDotNames(tileSetNames)
 
+		# Use the contents of the DEFAULTS directory to create the defaulttranslations section if
+		# the DEFAULTS directory exists and ignoreDefaults is False. Otherwise, ignore the contents
+		# of the DEFAULTS directory.
 		conflictingTileTranslationFound = False
 		tileSetsWithConflictingTranslations = {}
 		if 'DEFAULTS' in tileSetNames:
@@ -44,11 +97,15 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 
 			tileSetNames.remove('DEFAULTS')
 
+		# Create the tilesettranslations section.
 		for tileSetName in tileSetNames:
 			tileSetDirectory = os.path.join(translationTableRootDir, tileSetName)
 			tileTranslations, conflictingTileTranslations = \
 				self._createTileTranslationsFromSetDirectory(	tileSetDirectory, relativeDirectory,
 																environment)
+			
+			# If a conflicting tiletranslation is found stop translating tiles but continue to
+			# search for conflicting tiletranlations.
 			if conflictingTileTranslations:
 				conflictingTileTranslationFound = True
 				tileSetsWithConflictingTranslations[tileSetName] = conflictingTileTranslations
@@ -73,6 +130,13 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 		return self._translationTable.getCSV()
 
 	def getEnvironments(self):
+		"""
+		Return a list of supported environments.
+
+		An environment is considered to be supported if a least one TileTranslationCreator() plugin
+		has been registered for that environment.
+		"""
+
 		return self._environments
 
 	def registerPlugin(self, newPlugin, path):
@@ -110,7 +174,10 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 																relativeDirectory,
 																environment,
 																translationType):
-		
+		# Create tile translations using the TileTranslationCreator() plugin registered for the 
+		# environment/translation type or lacking that the one registered for the environment or
+		# lacking the the plugin registered as "default".
+
 		if self.queryPlugin([environment, translationType]):
 			tileCreator = self.getPlugin([environment, translationType])[0]
 		elif self.queryPlugin([environment]):
@@ -162,6 +229,13 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 
 class TileTranslationCreator(TileUtils.Plugin.StandardPlugin):
 	def createTranslation(self, filePath, relativeDirectory, environment, translationType):
+		"""
+		Create tile translation data using a file.
+
+		Returns a tuple containing the tile's name and its translation data. If the file couldn't
+		be used to create tile translation data then returns a tuple with the tile's name set to
+		None.
+		"""
 		raise NotImplementedError("This method is required.")		
 
 class DefaultTileTranslationCreator(TileTranslationCreator):
@@ -192,8 +266,19 @@ class BlenderObjectFromSceneTileTranlationCreator(TileTranslationCreator):
 
 if __name__ == "__main__":
 	directoryConverter = DirectoryToTranslationTableConverter()
+
+	# The 'default' TileTranslationCreator() plugin is used to create tiletranslation data if a
+	# plugin is not registered for a particular environment.
 	directoryConverter.registerPlugin(DefaultTileTranslationCreator(),["default"])
+
+	# The TileTranslationCreator() plugin registered for an environment is used to create
+	# tiletranslation data if a plugin is not registered for a particular environment/translation
+	# type.
 	directoryConverter.registerPlugin(DefaultTileTranslationCreator(),["blender"])	
+
+	# The TileTranslationCreator() plugin registered for a particular environment/translation type
+	# is used to create tiletranslation data for tiles if the given environment is specified and
+	# tile being translated is of the given translation type. 
 	directoryConverter.registerPlugin(	BlenderObjectFromSceneTileTranlationCreator(),
 										["blender", "blenderObjectFromScene"])
 
