@@ -9,7 +9,7 @@ description = 	(	"TileUtils is an experimental proof of concept that explores th
 					"(http://www.mapeditor.org) into abstract data using a translation table.")
 
 setup(	name = 'TileUtils',
-		version = '0.0.1',
+		version = '0.0.2',
 		packages = ['TileUtils'],
 		scripts = [	'TileUtils/csvttt/csvttt.py', 'TileUtils/dirttt/dirttt.py',
 					'TileUtils/ertileplacer/ertileplacer.py', 'TileUtils/tileplacer/tileplacer.py',
