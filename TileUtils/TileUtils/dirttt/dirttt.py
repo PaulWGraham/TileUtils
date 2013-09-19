@@ -105,7 +105,7 @@ class DirectoryToTranslationTableConverter(TileUtils.Plugin.Plugable):
 																environment)
 			
 			# If a conflicting tiletranslation is found stop translating tiles but continue to
-			# search for conflicting tiletranlations.
+			# search for conflicting tiletranslations.
 			if conflictingTileTranslations:
 				conflictingTileTranslationFound = True
 				tileSetsWithConflictingTranslations[tileSetName] = conflictingTileTranslations
