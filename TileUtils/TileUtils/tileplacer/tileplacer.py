@@ -361,7 +361,7 @@ class TilePlacer(TileUtils.Plugin.Plugable):
 		if saveFile is not None:
 			environment.save(args.save, teardownToken)
 
-		environment.teardown
+		environment.teardown()
 
 	def registerPlugin(self, newPlugin, path):
 		if super().registerPlugin(newPlugin, path):
