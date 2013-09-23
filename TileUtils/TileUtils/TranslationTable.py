@@ -94,20 +94,19 @@ class TranslationTable():
 																			translationType))
 
 
-		tileValues = self._tileSetTranslations.find(
-					"./tilesettranslation[@tilesetname='{}']/".format(tileSetName) +
-					"tiletranslation[@tilename='{}']/values".format(tileName))
+		tileValuesElement = self._tileSetTranslations.find(
+								"./tilesettranslation[@tilesetname='{}']/".format(tileSetName) +
+								"tiletranslation[@tilename='{}']/values".format(tileName))
 		
-		if tileValues is None:
+		if tileValuesElement is None:
 			self.addTile(tileSetName, tileName)
 			tileValuesElement = self._tileSetTranslations.find(
 									"./tilesettranslation[@tilesetname='{}']/".format(tileSetName) +
 									"tiletranslation[@tilename='{}']/values".format(tileName))
 
-			translationValueElement = \
-				xml.etree.ElementTree.SubElement(tileValuesElement,translationType)
-
-			translationValueElement.text = translationValue
+		translationValueElement = \
+		xml.etree.ElementTree.SubElement(tileValuesElement,translationType)
+		translationValueElement.text = translationValue
 
 
 
