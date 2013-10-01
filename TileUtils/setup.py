@@ -9,11 +9,12 @@ description = 	(	"TileUtils is an experimental proof of concept that explores th
 					"(http://www.mapeditor.org) into abstract data using a translation table.")
 
 setup(	name = 'TileUtils',
-		version = '0.0.2',
+		version = '0.0.3',
 		packages = ['TileUtils'],
-		scripts = [	'TileUtils/csvttt/csvttt.py', 'TileUtils/dirttt/dirttt.py',
-					'TileUtils/ertileplacer/ertileplacer.py', 'TileUtils/tileplacer/tileplacer.py',
-					'TileUtils/tttcsv/tttcsv.py' ], 
+		scripts = [	'TileUtils/createtmrc/createtmrc.py', 'TileUtils/csvttt/csvttt.py',
+					'TileUtils/dirttt/dirttt.py', 'TileUtils/ertileplacer/ertileplacer.py',
+					'TileUtils/tilenames/tilenames.py', 'TileUtils/tileplacer/tileplacer.py',
+					'TileUtils/tttcsv/tttcsv.py' ],
 		author = 'Paul Graham',
 		license = 'MIT',
 		description  = description,
