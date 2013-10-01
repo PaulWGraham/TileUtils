@@ -2,11 +2,14 @@ setup.py
 TileUtils/LICENSE
 TileUtils/Plugin.py
 TileUtils/TileTranslator.py
+TileUtils/TileSet.py
 TileUtils/TranslationTable.py
 TileUtils/__init__.py
+TileUtils/createtmrc/createtmrc.py
 TileUtils/csvttt/csvttt.py
 TileUtils/dirttt/dirttt.py
 TileUtils/ertileplacer/ertileplacer.py
+TileUtils/tilenames/tilenames.py
 TileUtils/tileplacer/tileplacer.py
 TileUtils/tttcsv/tttcsv.py
 
