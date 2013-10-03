@@ -485,7 +485,15 @@ class TMRCModel():
 		if self._pathToTranslationTable != path:
 			self._pathToTranslationTable = path
 			self._translationTable = TileUtils.TranslationTable.TranslationTable()
-			self._translationTable.loadFromXMLFile(path)
+
+			# If the self._pathToTranslationTable is a relative path assume it's relative to the
+			# directory that stores the tile map file.
+			if os.path.isabs(self._pathToTranslationTable):
+				self._translationTable.loadFromXMLFile(self._pathToTranslationTable)
+			else:
+				self._translationTable.loadFromXMLFile(os.path.join(
+					os.path.dirname(self._pathToTileMapFile), self._pathToTranslationTable))
+
 			tileSetsUsed = self.getTileSetsUsedInTranslationTable()
 			for remapValue in self._remap:
 				if remapValue not in tileSetsUsed:
@@ -1029,9 +1037,16 @@ class TMRCController():
 			defaultextension=".ttt", multiple = False)
 		if pathToTranslationTable:
 			pathToTileMapFile = self.model.getPathToTileMapFile()
+
 			if pathToTileMapFile:
-				pathToTranslationTable = os.path.relpath(pathToTranslationTable, os.path.dirname(
+				translationTableDirName, translationTableFilename = \
+					os.path.split(pathToTranslationTable)
+				
+				pathToTranslationTable = os.path.relpath(translationTableDirName, os.path.dirname(
 					pathToTileMapFile))
+
+				pathToTranslationTable = os.path.join(	pathToTranslationTable,
+														translationTableFilename)
 			self.model.setPathToTranslationTable(pathToTranslationTable)
 
 	def _translationTableEntryCallback(self):
@@ -1195,16 +1210,11 @@ class TMRCController():
 
 		self._translationTableEntryVariable.trace_vdelete('w',
 			self._translationTableEntryCallbackIdentifier)
-		self._translationTableEntryVariable.set('')
-		
+
 		if pathToTranslationTable:
-			pathToTileMapFile = self.model.getPathToTileMapFile()
-			if pathToTileMapFile:
-				pathToTranslationTable = os.path.relpath(pathToTranslationTable, os.path.dirname(
-					pathToTileMapFile))
-			
-			self.model.setPathToTranslationTable(pathToTranslationTable)
-			self._translationTableEntryVariable.set(self.model.getPathToTranslationTable())
+			self._translationTableEntryVariable.set(pathToTranslationTable)
+		else:
+			self._translationTableEntryVariable.set('')
 		
 		self.translationTableEntryCallbackIdentifier = \
 			self._translationTableEntryVariable.trace('w', self._translationTableEntryCallback)

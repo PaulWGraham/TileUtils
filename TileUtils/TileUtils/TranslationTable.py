@@ -118,6 +118,7 @@ class TranslationTable():
 	# 		return translationType.text
 
 	# 	return None
+
 	
 	def getCSV(self):
 		rowsToBeWrittenToCSV = []
@@ -161,6 +162,47 @@ class TranslationTable():
 			writer.writerows(rowsToBeWrittenToCSV)
 
 			return stringBuffer.getvalue()
+
+	def getTileSetNamesAsList(self):
+		tileSetNames = set()
+		for tileSetTranslation in self._tileSetTranslations:
+			tileSetNames.add(tileSetTranslation.attrib['tilesetname'])
+
+		return list(tileSetNames)
+
+	def getTranslationTypesAsList(self):
+		translationTypes = set()
+		translationTypeElements = \
+			self._defaultTranslations.findall('./tiletranslation/values/*')
+
+		for translationTypeElement in translationTypeElements:
+			translationTypes.add(translationTypeElement.tag)
+
+		translationTypeElements = \
+			self._tileSetTranslations.findall('./tilesettranslation/tiletranslation/values/*')
+
+		for translationTypeElement in translationTypeElements:
+			translationTypes.add(translationTypeElement.tag)
+
+		return list(translationTypes)
+
+	def getTranslationTypesForTileSetTranslationAsList(self, tileSetTranslationName):
+		tileSetTranslationElement = \
+			self._tileSetTranslations.find(
+			'./tilesettranslation[@tilesetname="{}"]'.format(tileSetTranslationName))
+
+		if tileSetTranslationElement is None:
+			raise IndexError(
+				"No tilesettranslation element found for {}".format(tileSetTranslationName))
+
+		translationTypes = set()
+		translationTypeElements = \
+			tileSetTranslationElement.findall('./tiletranslation/values/*')
+
+		for translationTypeElement in translationTypeElements:
+			translationTypes.add(translationTypeElement.tag)
+
+		return list(translationTypes)
 
 	def getXML(self):
 		tree = xml.etree.ElementTree.ElementTree()
