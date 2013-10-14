@@ -11,5 +11,6 @@ TileUtils/dirttt/dirttt.py
 TileUtils/ertileplacer/ertileplacer.py
 TileUtils/tilenames/tilenames.py
 TileUtils/tileplacer/tileplacer.py
+TileUtils/tmrctileplacer/tmrctileplacer.py
 TileUtils/tttcsv/tttcsv.py
 
